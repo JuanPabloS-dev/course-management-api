@@ -15,7 +15,7 @@ async create(name:string,email:string,password:string){
 
 async findByEmail(email:string){
     const query = `
-    SELECT id,name,email,role FROM USERS
+    SELECT * FROM USERS
     WHERE email = $1
     ;
     `
