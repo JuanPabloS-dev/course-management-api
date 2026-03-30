@@ -4,7 +4,7 @@ export interface CourseRepository {
   findByTeacherId(teacherId: string): Promise<Course[]>
   findByTeacherAndTitle(teacherId: string, title: string): Promise<Course | null>
   updateCourse(id: string, data: UpdateCourseInput): Promise<Course | null>
-  deleteCourse(id: string, teacherId: string): Promise<void>
+  deleteCourse(id: string): Promise<void>
 }
 
 export type Course = {

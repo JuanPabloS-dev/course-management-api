@@ -1,6 +1,6 @@
 import express from "express";
 import UserRepository from "./repositories/user.repository.ts";
-import UserService from "./services/user.services.ts";
+import UserService from "./services/user.service.ts";
 import morgan from "morgan";
 import authenticationMiddleware from "./middlewares/auth.meddleware.ts";
 import roleGuard from "./middlewares/role.middleware.ts";

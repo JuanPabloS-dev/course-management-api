@@ -3,7 +3,6 @@ import jwt from 'jsonwebtoken'
 import env from '../config/env.ts'
 import type { UserPayload } from '../types/express'
 import UnauthorizedError from '../errors/unauthorized.error.ts'
-import { th } from 'zod/locales'
 
 const authenticationMiddleware = (
   req: Request,
