@@ -1,10 +1,11 @@
 
-import type CourseService from '../services/course.service';
+import type CourseService from '../services/course.service.ts';
 import type { NextFunction, Request, Response } from 'express';
-import { BadRequestError, BaseError } from '../errors';
-import type { UpdateCourseInput } from '../types/courses.types';
+import  BadRequestError from '../errors/bad-request.error.ts';
+import type { UpdateCourseInput } from '../types/courses.types.ts';
 class CourseController {
-    constructor(private courseService: CourseService) {
+    private courseService: CourseService
+    constructor(courseService: CourseService) {
         this.courseService = courseService;
 }
 
@@ -26,6 +27,7 @@ class CourseController {
         res.status(200).json(result);
     }
     async getByTeacherId(req: Request, res: Response, next: NextFunction) {
+        console.log(req.user);
         const teacherId = req.user?.id as string;
         const result = await this.courseService.getCoursesByTeacherId(teacherId);
         res.status(200).json(result);

@@ -1,4 +1,4 @@
-import BaseError from "./base.error";
+import BaseError from "./base.error.ts";
 
 class ConflictError extends BaseError {
   constructor(message = "Conflict") {

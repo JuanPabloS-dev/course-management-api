@@ -1,5 +1,5 @@
 import { tr } from "zod/locales";
-import type { CourseRepository } from "../types/courses.types";
+import type { CourseRepository } from "../types/courses.types.ts";
 import type {
   Course,
   CreateCourseInput,
@@ -7,7 +7,10 @@ import type {
 } from "../types/courses.types";
 import type { Pool } from "pg";
 class PostgresCourseRepository implements CourseRepository {
-  constructor(private pool: Pool) {}
+  private pool: Pool
+  constructor(pool: Pool) {
+    this.pool = pool;
+  }
   async createCourse(data: CreateCourseInput): Promise<Course> {
     try {
       const query = `INSERT INTO courses(title,description,teacher_id)
@@ -24,7 +27,7 @@ class PostgresCourseRepository implements CourseRepository {
   }
   async findById(id: string): Promise<Course | null> {
     try {
-      const query = `SELECT id,title,description,created_at,teacher_id 
+      const query = `SELECT id,title,description,created_at,teacher_id as "teacherId"
         FROM courses WHERE id = $1
         ;
         `;

@@ -1,14 +1,15 @@
-import type { UpdateCourseInput } from "./../types/courses.types";
+import type { UpdateCourseInput } from "./../types/courses.types.ts";
 import type {
   CourseRepository,
   CreateCourseInput,
-} from "../types/courses.types";
-import { ConflictError,ForbiddenError,NotFoundError,
-
- } from "../errors";
+} from "../types/courses.types.ts";
+import NotFoundError from "../errors/not-found.error.ts";
+import ConflictError from "../errors/conflict.error.ts";
+import ForbiddenError from "../errors/forbidden.error.ts";
 
 class CourseService {
-  constructor(private courseRepository:CourseRepository) {
+  private courseRepository:CourseRepository
+  constructor(courseRepository:CourseRepository) {
     this.courseRepository = courseRepository;
   }
 

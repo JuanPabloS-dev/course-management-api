@@ -1,47 +1,42 @@
 import express from "express";
 import UserRepository from "./repositories/user.repository.ts";
 import UserService from "./services/user.service.ts";
-import morgan from "morgan";
-import authenticationMiddleware from "./middlewares/auth.meddleware.ts";
-import roleGuard from "./middlewares/role.middleware.ts";
+import UserController from "./controllers/user.controller.ts";
+import usersRoutes from "./routes/users.routes.ts";
 import errorHandlerMiddleware from "./middlewares/error-handler.middleware.ts";
-import type { Request,Response } from "express";
+import morgan from "morgan";
+import CourseService from './services/course.service.ts';
+import CourseController from './controllers/course.controller.ts';
+import courseRoutes from './routes/course.routes.ts';
+import PostgresCourseRepository from './repositories/course.repository.ts';
+import { Pool } from "pg";
+import pool from "./config/database.ts";
+
+
 
 const app = express();
-
-const userRepo = new UserRepository()
+function user(){
+const userRepo = new UserRepository(pool)
 const userService = new UserService(userRepo)
+const userController = new UserController(userService)
+return usersRoutes(userController)
+}
+
+function course(){
+    const courseRepo = new PostgresCourseRepository(pool)
+    const courseService = new CourseService(courseRepo)
+    const courseController = new CourseController(courseService)
+    return courseRoutes(courseController)
+}
+
+
 app.use(morgan('dev'))
 app.use(express.json())
 
-app.get('/',(req,res)=>{
-    res.send('hola mundo')
-})
-app.post('/register', async(req,res)=>{
-    try {
-        const {name,email,password} = req.body
-        const user = userService.register(name,email,password)
-        res.status(201).json(user)
-    } catch (error:any) {
-        res.status(400).json({message:error.message})
-    }
-});
 
-app.post('/login', async(req,res)=>{
-    try {
-        const {email,password} = req.body
-        const result = await userService.login(email,password)
-        res.status(200).json(result)
-    } catch (error:any) {
-        res.status(400).json({error:error.message})
-    }
 
-})
-
-app.get('/admin-test',authenticationMiddleware,roleGuard(['ADMIN']),(req:Request,res:Response)=>{
-    res.json({message:'access successful'})
-})
-
+app.use('/',user())
+app.use('/courses',course())
 
 app.use(errorHandlerMiddleware)
 
