@@ -5,7 +5,7 @@ import type {
 } from "../types/courses.types.ts";
 import NotFoundError from "../errors/not-found.error.ts";
 import ConflictError from "../errors/conflict.error.ts";
-import ForbiddenError from "../errors/forbidden.error.ts";
+import assertCourseOwnership from "../helpers/course-auth.helper.ts";
 
 class CourseService {
   private courseRepository:CourseRepository
@@ -28,18 +28,12 @@ class CourseService {
   }
 
   async updateCourse(id: string, data: UpdateCourseInput, teacherId: string) {
-    const courseExists = await this.courseRepository.findById(id);
-    if (!courseExists) throw new NotFoundError("Course not found");
-    if (courseExists.teacherId !== teacherId) throw new ForbiddenError("You cannot modify this course");
-    const result = await this.courseRepository.updateCourse(id, data);
-    if (result) return result;
-    else throw new Error("fail requests");
+    await assertCourseOwnership(this.courseRepository,id, teacherId);
+    return await this.courseRepository.updateCourse(id, data);
   }
 
   async deleteCourse(id:string,teacherId:string){
-    const courseExist = await this.courseRepository.findById(id)
-    if (!courseExist) throw new NotFoundError("Course not found");
-    if (courseExist.teacherId !== teacherId) throw new ForbiddenError("You cannot modify this course");;
+    await assertCourseOwnership(this.courseRepository,id, teacherId);
     await this.courseRepository.deleteCourse(id)
 
   }

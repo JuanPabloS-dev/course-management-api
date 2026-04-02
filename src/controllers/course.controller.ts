@@ -27,7 +27,6 @@ class CourseController {
         res.status(200).json(result);
     }
     async getByTeacherId(req: Request, res: Response, next: NextFunction) {
-        console.log(req.user);
         const teacherId = req.user?.id as string;
         const result = await this.courseService.getCoursesByTeacherId(teacherId);
         res.status(200).json(result);

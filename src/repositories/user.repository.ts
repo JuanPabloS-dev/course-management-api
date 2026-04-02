@@ -1,31 +1,31 @@
+import type { CreateUserInput, UsersRepository} from '../types/users.types.ts';
 import type { Pool } from "pg";
-import pool from "../config/database.ts";
 
-class UserRepository {
+class UserRepository implements UsersRepository {
     private pool: Pool
     constructor(pool: Pool) {
         this.pool = pool;
     }
-  async create(name: string, email: string, password: string) {
+  async create(data: CreateUserInput) {
     const query: string = `
     INSERT INTO users(name,email,password)
     VALUES($1,$2,$3)
-    RETURNING id, name, email, role, created_at
+    RETURNING id, name, email, role, created_at as "createdAt"
     ;
     `;
-    const values = [name, email, password];
+    const values = [data.name, data.email, data.password];
     const result = await this.pool.query(query, values);
     return result.rows[0];
   }
 
   async findByEmail(email: string) {
     const query = `
-    SELECT * FROM USERS
+    SELECT * FROM users
     WHERE email = $1
     ;
     `;
     const result = await this.pool.query(query, [email]);
-    return result.rows[0];
+    return result.rows[0] ?? null;
   }
 }
 

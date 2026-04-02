@@ -4,9 +4,10 @@ import authenticationMiddleware from "../middlewares/auth.meddleware.ts";
 import roleGuard from "../middlewares/role.middleware.ts";
 
 
-const courseRouter = Router();
+
 
 export default (controller: CourseController) => {
+    const courseRouter = Router();
     courseRouter.post('/create', authenticationMiddleware, roleGuard(['TEACHER', 'ADMIN']), controller.createCourse.bind(controller));
     courseRouter.get('/teacher', authenticationMiddleware, roleGuard(['TEACHER', 'ADMIN']), controller.getByTeacherId.bind(controller));
     courseRouter.get('/:id', authenticationMiddleware, controller.getById.bind(controller));
