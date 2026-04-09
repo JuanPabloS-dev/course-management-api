@@ -13,40 +13,53 @@ import LessonService from './services/lesson.service.ts';
 import LessonController from './controllers/lesson.controller.ts';
 import lessonRoutes from './routes/lesson.routes.ts';
 import PostgresLessonRepository from './repositories/lesson.repository.ts';
-
+import EnrollmentRepository from "./repositories/enroll.repository.ts";
+import EnrollmentService from "./services/enroll.service.ts";
+import EnrollmentController from "./controllers/enroll.controller.ts";
+import enrollRoutes from "./routes/enroll.routes.ts";
 import pool from "./config/database.ts";
 
 
 
 const app = express();
-function user(){
+
+
 const userRepo = new UserRepository(pool)
+const courseRepo = new PostgresCourseRepository(pool)
+const lessonRepo = new PostgresLessonRepository(pool)
+const enrollRepo = new EnrollmentRepository(pool)
+function user(){
+
 const userService = new UserService(userRepo)
 const userController = new UserController(userService)
 return usersRoutes(userController)
 }
 
 function course(){
-    const courseRepo = new PostgresCourseRepository(pool)
+
     const courseService = new CourseService(courseRepo)
     const courseController = new CourseController(courseService)
     return courseRoutes(courseController)
 }
 
 function lesson(){
-    const lessonRepo = new PostgresLessonRepository(pool)
-    const courseRepo = new PostgresCourseRepository(pool)
 
     const lessonService = new LessonService(lessonRepo, courseRepo)
     const lessonController = new LessonController(lessonService)
 
     return lessonRoutes(lessonController)
 }
+function enroll(){
+
+    const enrollService = new EnrollmentService(enrollRepo,courseRepo,userRepo)
+    const enrollController = new EnrollmentController(enrollService)
+    return enrollRoutes(enrollController)
+}
 
 app.use(morgan('dev'))
 app.use(express.json())
 app.use('/lessons', lesson())
-
+app.use('/enrollments', enroll())
 
 
 app.use('/',user())

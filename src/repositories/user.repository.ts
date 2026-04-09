@@ -27,6 +27,16 @@ class UserRepository implements UsersRepository {
     const result = await this.pool.query(query, [email]);
     return result.rows[0] ?? null;
   }
+  async findById(id: string) {
+    const query = `
+    SELECT id, name, email, password, role, created_at as "createdAt" FROM users
+    WHERE id = $1
+    ;
+    `;
+    const result = await this.pool.query(query, [id]);
+    return result.rows[0] ?? null;
+  }
+
 }
 
 export default UserRepository;
