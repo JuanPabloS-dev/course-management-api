@@ -2,7 +2,6 @@ import type { UsersRepository } from "../types/users.types";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import env from "../config/env.ts";
-import BadRequestError from "../errors/bad-request.error.ts";
 import UnauthorizedError from "../errors/unauthorized.error.ts";
 
 class UserService {

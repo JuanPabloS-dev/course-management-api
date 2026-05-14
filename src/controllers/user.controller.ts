@@ -1,6 +1,7 @@
 import UserService from "../services/user.service.ts";
 import type { Request, Response, NextFunction } from "express";
-import BadRequestError from "../errors/bad-request.error.ts";
+import validateRegister from "../validators/users/validateRegister.ts";
+import validateLogin from "../validators/users/validateLogin.ts";
 
 class UserController {
     private userService: UserService
@@ -9,24 +10,15 @@ class UserController {
     }
 
     async register(req: Request, res: Response, next: NextFunction) {
-        try {
-            const { name, email, password } = req.body;
-            if (!name || !email || !password) throw new BadRequestError("Name, email and password are required");
-            const user = await this.userService.register(name, email, password);
-            res.status(201).json(user);
-        } catch (error) {
-            next(error);
-        }
+        const dto = validateRegister(req.body);
+        const user = await this.userService.register(dto.name, dto.email, dto.password);
+        res.status(201).json(user);
+
     }
     async login(req: Request, res: Response, next: NextFunction) {
-        try {
-            const { email, password } = req.body;
-            if (!email || !password) throw new BadRequestError("Email and password are required");
-            const result = await this.userService.login(email, password);
-            res.status(200).json(result);
-        } catch (error) {
-            next(error);
-        }
+        const dto = validateLogin(req.body);
+        const token = await this.userService.login(dto.email, dto.password);
+        res.json({ token });    
 
 }
 

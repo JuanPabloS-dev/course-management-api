@@ -20,14 +20,12 @@ class LessonService {
   }
 
   async createLesson(data: CreateLessonInput, teacherId: string) {
-    // verificar que el course existe
     const course = await this.courseRepository.findById(data.courseId);
 
     if (!course) {
       throw new NotFoundError("Course not found");
     }
 
-    // verificar ownership
     if (course.teacherId !== teacherId) {
       throw new NotFoundError("You do not own this course");
     }
