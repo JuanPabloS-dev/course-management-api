@@ -11,7 +11,6 @@ class CourseController {
 
     async createCourse(req: Request, res: Response, next: NextFunction) {
         const { title, description } = req.body;
-        if (!title || !description) throw new BadRequestError("Title and description are required");
         const teacherId = req.user?.id as string;
         const result = await this.courseService.createCourse({
             title,
@@ -31,17 +30,25 @@ class CourseController {
         const result = await this.courseService.getCoursesByTeacherId(teacherId);
         res.status(200).json(result);
     }
-    async updateCourse(req: Request, res: Response, next: NextFunction) {
-        const { id } = req.params;
-        const { title, description } = req.body;
-        const data: UpdateCourseInput = {};
-        if (!title?.trim() && !description?.trim()) throw new BadRequestError("At least one field is required");
-        if (title?.trim()) data.title = title.trim();
-        if (description?.trim()) data.description = description.trim();
-        const teacherId = req.user?.id as string;
-        const result = await this.courseService.updateCourse(id as string, data, teacherId);
-        res.status(200).json(result);
-    }
+    async updateCourse(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+
+    const { id } = req.params;
+
+    const teacherId = req.user?.id as string;
+
+    const result =
+        await this.courseService.updateCourse(
+            id as string,
+            req.body,
+            teacherId
+        );
+
+    res.status(200).json(result);
+}
     async deleteCourse(req: Request, res: Response, next: NextFunction) {
         const { id } = req.params;
         const teacherId = req.user?.id as string;

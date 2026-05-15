@@ -3,6 +3,8 @@ import type LessonController from "../controllers/lesson.controller.ts";
 import authenticationMiddleware from "../middlewares/auth.meddleware.ts";
 import roleGuard from "../middlewares/role.middleware.ts";
 import { asyncHandler } from "../utils/asyncHandler.ts";
+import validate from "../middlewares/validation.middleware.ts";
+import {createLessonSchema,updateLessonSchema} from "../validations/lesson.validation.ts";
 
 export default (controller: LessonController) => {
     const lessonRouter = Router();
@@ -11,6 +13,7 @@ export default (controller: LessonController) => {
         '/create/:courseId',
         authenticationMiddleware,
         roleGuard(['TEACHER', 'ADMIN']),
+        validate(createLessonSchema),
         asyncHandler(controller.createLesson.bind(controller))
     );
 
@@ -30,6 +33,7 @@ export default (controller: LessonController) => {
         '/update/:lessonId',
         authenticationMiddleware,
         roleGuard(['TEACHER', 'ADMIN']),
+        validate(updateLessonSchema),
         asyncHandler(controller.updateLesson.bind(controller))
     );
 

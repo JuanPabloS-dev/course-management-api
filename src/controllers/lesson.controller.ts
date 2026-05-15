@@ -14,16 +14,12 @@ class LessonController {
     const { title, content } = req.body;
     const { courseId } = req.params;
 
-    if (!title?.trim() || !content?.trim()) {
-      throw new BadRequestError("Title and content are required");
-    }
-
     const teacherId = req.user?.id as string;
 
     const result = await this.lessonService.createLesson(
       {
-        title: title.trim(),
-        content: content.trim(),
+        title: title,
+        content: content,
         courseId: courseId as string,
       },
       teacherId
@@ -54,13 +50,7 @@ class LessonController {
 
     const data: UpdateLessonInput = {};
 
-    if (!title?.trim() && !content?.trim()) {
-      throw new BadRequestError("At least one field is required");
-    }
-
-    if (title?.trim()) data.title = title.trim();
-    if (content?.trim()) data.content = content.trim();
-
+    
     const teacherId = req.user?.id as string;
 
     const result = await this.lessonService.updateLesson(
